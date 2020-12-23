@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  exbin:
+    image: m1dnight/occupancy:latest
+    restart: always
+    environment:
+      - NIKO_IP=${NIKO_IP}
+      - NIKO_PORT=${NIKO_PORT}
+      - NIKO_USERNAME=${NIKO_USERNAME}
+      - NIKO_PASSWORD=${NIKO_PASSWORD}
+      - ZIGBEE_IP=${ZIGBEE_IP}
+      - ZIGBEE_PORT=${ZIGBEE_PORT}
+    volumes:
+      - ${CONFIG}:/app/config.json

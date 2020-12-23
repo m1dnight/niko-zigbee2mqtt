@@ -1,0 +1,30 @@
+
+      {
+        "timeouts": {
+            "Motion3": 10,
+            "Motion2": 10,
+            "Motion1": 10
+        },
+        "targets": {
+            "Motion3": [
+                {
+                    "server": "niko",
+                    "id": "7cb19b84-3c3c-4ecc-b4b2-10b9b282e7d0"
+                }
+		
+            ],
+            "Motion2": [
+                {
+                    "server": "niko",
+                    "id": "7bf33749-c992-42b5-81af-1e8ec3a44e97"
+                }
+            ],
+            "Motion1": [
+                {
+                    "server": "zigbee2mqtt",
+                    "id": "0x842e14fffe7832d7"
+                }
+            ]
+        }
+    }
+    
