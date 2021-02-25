@@ -57,7 +57,7 @@ defmodule Rules.Lights do
   end
 
   def handle_info(%{device: sensor, payload: _p = %{"occupancy" => true}}, state) do
-    Logger.info "#{sensor} detected occupancy."
+    Logger.info("#{sensor} detected occupancy.")
     # Calculate which devices to turn on. Example:
     # [%{"id" => "0x842e14fffe7832d7", "server" => "zigbee2mqtt"}]
     targets =
@@ -67,6 +67,9 @@ defmodule Rules.Lights do
 
     # Filter out devices that are already on.
     to_turn_on = Enum.filter(targets, &(not Map.has_key?(state.on, &1)))
+
+    # Find the devices that need to be updated (i.e., they are on, but there is still movement).
+    already_on = Enum.filter(targets, &(Map.has_key?(state.on, &1)))
 
     # Turn on the devices.
     to_turn_on
@@ -78,13 +81,21 @@ defmodule Rules.Lights do
       |> Enum.map(&{&1, now()})
       |> Enum.into(state.on)
 
+    # All the devices that were on need to have an updated timestamp.
+    updated =
+      already_on
+      |> Enum.map(fn d -> Logger.info "Pushing off-time for #{inspect d}" ; d end)
+      |> Enum.map(&{&1, now()})
+      |> Enum.into(turned_on)
+
     # If we turned device on, check to turn them off in a minute.
     if Enum.count(to_turn_on) > 0 do
+      Logger.debug "Scheduling check after motion detection."
       Process.send_after(self(), :check, 30 * 1000)
     end
 
     # Store the devices we turned on.
-    new_state = %{state | on: turned_on}
+    new_state = %{state | on: updated}
 
     {:noreply, new_state}
   end
